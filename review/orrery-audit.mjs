@@ -73,6 +73,12 @@ check('platform PRNG construction quoted', has('splitmix64 into sfc32'));
 check('seed 1391882777 is edition 1 entropy mod 2^32', (BigInt('0xe9fa8515caf823a1a45b19ef4d8b6c720c47246bb90b74a387350a3952f67219') % (1n << 32n)) === 1391882777n && has('1391882777, edition 1\'s stored entropy reduced modulo $2^{32}$'));
 check('memory at editions 15/30/44 in Figure 1', [15, 30, 44].every((e, i) => Math.round(100 * Math.max(.12, 1 - .88 * (e - 1) / 43)) === [71, 41, 12][i]) && has('memory 71\\%') && has('memory 41\\%') && has('memory 12\\%'));
 
+// archive identifiers agree across the paper, README and Zenodo metadata
+const DOI = '10.5281/zenodo.23333266', GH = 'https://github.com/TheBenMeadows/essentialism-preprint';
+const readme = readFileSync('README.md', 'utf8'), zen = readFileSync('.zenodo.json', 'utf8');
+check('DOI and repo URL in abstract and Section 6', (tex.match(new RegExp(DOI.replace(/\./g, '\\.'), 'g')) || []).length === 2 && (tex.match(new RegExp(GH.replace(/[./]/g, m => '\\' + m), 'g')) || []).length === 2);
+check('README and .zenodo.json carry the same DOI', readme.includes(`https://doi.org/${DOI}`) && zen.includes(DOI));
+
 // citations
 const bib = readFileSync('refs.bib', 'utf8');
 const keys = new Set([...bib.matchAll(/@\w+\{([^,]+),/g)].map(m => m[1]));

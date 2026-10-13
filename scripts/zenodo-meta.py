@@ -10,7 +10,7 @@ title = re.search(r"\\title\{(.*?)\}\n", tex, re.S).group(1)
 title = re.sub(r"\\texttt\{(.*?)\}", r"\1", title).replace("\\\\", " ")
 abstract = tex.split("\\begin{abstract}")[1].split("\\end{abstract}")[0].strip()
 for a, b in [(r"\\texttt\{(.*?)\}", r"\1"), (r"\$28\\times38\$", "28x38"), (r"\\%", "%"), (r"\{,\}", ","),
-             (r"``|''", '"'), (r"\\citep?\{.*?\}", "")]:
+             (r"``|''", '"'), (r"\\citep?\{.*?\}", ""), (r"\\url\{(.*?)\}", r"\1")]:
     abstract = re.sub(a, b, abstract)
 assert "\\" not in abstract and "$" not in abstract, "unconverted LaTeX left in abstract"
 (root / "abstract.txt").write_text(abstract + "\n")
