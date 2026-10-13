@@ -1,0 +1,14 @@
+trait,value,spec,count,share,z
+density,air,0.5,9930,0.4965,-0.99
+density,field,0.38,7618,0.3809,0.26
+density,full,0.12,2452,0.1226,1.13
+inks,1,0.04,760,0.0380,-1.44
+inks,2,0.56,11243,0.5622,0.61
+inks,3,0.3,5972,0.2986,-0.43
+inks,4,0.1,2025,0.1013,0.59
+source,blue tree,0.87,17351,0.8676,-1.03
+source,natural gradient,0.13,2649,0.1325,1.03
+night,true,0.08,1622,0.0811,0.57
+night,false,0.92,18378,0.9189,-0.57
+ember,true,0.55,10968,0.5484,-0.45
+ember,false,0.45,9032,0.4516,0.45

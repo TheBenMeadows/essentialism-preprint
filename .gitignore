@@ -1,0 +1,7 @@
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+.DS_Store
+.claude/
