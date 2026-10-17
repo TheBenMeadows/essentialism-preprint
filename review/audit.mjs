@@ -37,8 +37,12 @@ const claims = [
   ['null_med_max_tree', x => x, 3, 'ranges from 0.000 to 0.101 for tree tokens'],
   ['null_med_max_sky', x => x, 3, 'and to 0.104 for sky tokens'],
   ['null_med_max_sky', x => x, 3, 'medians between 0.00 and 0.104'],
-  ['dots_med_ed9_tree', x => x, 2, 'median drawn correlation of 0.79 (tree) or 0.81 (sky)'],
-  ['dots_med_ed9_sky', x => x, 2, 'median drawn correlation of 0.79 (tree) or 0.81 (sky)'],
+  ['dots_med_ed10_tree', x => x, 2, 'median drawn correlation of 0.79 (tree) or 0.81 (sky)'],
+  ['dots_med_ed10_sky', x => x, 2, 'median drawn correlation of 0.79 (tree) or 0.81 (sky)'],
+  ['dots_med_ed10_tree', x => x, 2, 'is 0.79 for tree tokens and 0.81 for sky tokens'],
+  ['dots_med_ed10_sky', x => x, 2, 'is 0.79 for tree tokens and 0.81 for sky tokens'],
+  ['field_med_ed10_tree', x => x, 3, "the field's median correlation is 0.994 for tree tokens and 0.995 for sky tokens"],
+  ['field_med_ed10_sky', x => x, 3, "the field's median correlation is 0.994 for tree tokens and 0.995 for sky tokens"],
   ['fstar_tree', x => x, 3, '$f^\\ast = 0.334$ for the tree'],
   ['fstar_sky', x => x, 3, 'and $0.327$ for the sky'],
   ['fstar_tree_edition', x => x, 1, 'edition 33.5 and 33.9'],
@@ -94,7 +98,7 @@ const ordered = [
   `it gives ${f2('closed_ed44_tree')} and ${f2('closed_ed44_sky')} against ${f2('field_ed44_tree')} and ${f2('field_ed44_sky')}`,
   `edition ${st.fstar_tree_edition.toFixed(1)} and ${st.fstar_sky_edition.toFixed(1)}`,
   `median of ${f2('dots_med_ed1_tree')} (tree) and ${f2('dots_med_ed1_sky')} (sky)`,
-  `${f2('dots_med_ed9_tree')} (tree) or ${f2('dots_med_ed9_sky')} (sky)`,
+  `${f2('dots_med_ed10_tree')} (tree) or ${f2('dots_med_ed10_sky')} (sky)`,
   `loses ${f2('field_loss_ed34_44_tree')} (tree) and ${f2('field_loss_ed34_44_sky')} (sky)`,
 ];
 for (const o of ordered) { const ok = tex.includes(o); if (!ok) fails++; console.log(`${ok ? 'PASS' : 'FAIL'}  ordered pair: ${o}`); }

@@ -26,14 +26,14 @@ const sha = createHash('sha256').update(code.replace(/\n+$/, ''), 'utf8').digest
 check('generator digest in text matches the copy', has(sha), sha.slice(0, 12));
 check('version 6 on chain', key.version === '6' && has('generator version 6'));
 check('44 editions at 8 tez', key.sale.editions === '44' && key.sale.price === '8000000' && has('The edition is 44 tokens at 8 tez'));
-check('nine minted', key.n_tokens === '9' && has('Nine of the 44 editions are minted'));
+check('ten minted', key.n_tokens === '10' && has('Ten of the 44 editions are minted') && has('Ten editions are minted'));
 check('stored bytes 15,560', Buffer.from(key.code, 'hex').length === 15560 && has('15{,}560 bytes'));
 check('code bytes 10,098', Buffer.byteLength(code.replace(/\n+$/, '')) === 10098 && has('10{,}098 bytes'));
-check('16 writes', hist.length === 16 && has('written 16 times'), `${hist.length}`);
+check('17 writes', hist.length === 17 && has('written 17 times') && has('All 17 writes are listed'), `${hist.length}`);
 const versions = hist.filter((u, i) => i === 0 || u.value.version !== hist[i - 1].value.version).length;
 const sales = hist.filter((u, i) => i > 0 && JSON.stringify(u.value.sale) !== JSON.stringify(hist[i - 1].value.sale)).length;
 const mints = hist.filter((u, i) => i > 0 && u.value.n_tokens !== hist[i - 1].value.n_tokens).length;
-check('write breakdown 1 create + 5 versions + 1 sale + 9 mints', versions === 6 && sales === 1 && mints === 9 && has('once to create it, five times to publish versions 2 to 6, once to open the sale, and nine times to record a mint'), `${versions} version states, ${sales} sale, ${mints} mints`);
+check('write breakdown 1 create + 5 versions + 1 sale + 10 mints', versions === 6 && sales === 1 && mints === 10 && has('once to create it, five times to publish versions 2 to 6, once to open the sale, and ten times to record a mint'), `${versions} version states, ${sales} sale, ${mints} mints`);
 const v1 = hist[0], firstMint = hist.find(u => u.value.n_tokens === '1'), v4 = hist.find(u => u.value.version === '4');
 check('version 1 at 22:10:28 UTC 31 July', v1.timestamp === '2026-07-31T22:10:28Z' && has('published at 22:10:28 UTC on 31 July'));
 const mins = (new Date(firstMint.timestamp) - new Date(v1.timestamp)) / 60000;
@@ -70,7 +70,18 @@ const weights = [['[[2, 56], [3, 30], [4, 10], [1, 4]]', '4 / 56 / 30 / 10\\%'],
 for (const [c, t] of weights) check(`trait weights ${t}`, code.includes(c) && has(t));
 check('paper weights 28/22/20/12/10', code.includes("['#f6ecf2', 28], ['#f0c9d3', 20], ['#f3e7d4', 22], ['#f2f0f6', 12], ['#8cadd7', 10]") && has('28/22/20/12/10\\%'));
 check('platform PRNG construction quoted', has('splitmix64 into sfc32'));
-check('seed 1391882777 is edition 1 entropy mod 2^32', (BigInt('0xe9fa8515caf823a1a45b19ef4d8b6c720c47246bb90b74a387350a3952f67219') % (1n << 32n)) === 1391882777n && has('1391882777, edition 1\'s stored entropy reduced modulo $2^{32}$'));
+// provenance (data/provenance.csv from repro/provenance.mjs; correlations from review/thumb-match.mjs)
+const prov = readFileSync('data/provenance.csv', 'utf8').trim().split('\n').slice(1).map(l => l.split(','));
+const bitrev = hex => [...Buffer.from(hex, 'hex')].map(b => parseInt(b.toString(2).padStart(8, '0').split('').reverse().join(''), 2).toString(16).padStart(2, '0')).join('');
+const decimals = prov.filter(r => r[8] === 'decimal'), raws = prov.filter(r => r[0] === '5364' && r[8] === 'raw');
+check('ten tokens, one program-bearing artifact each, in data/provenance.csv', new Set(prov.map(r => r[0])).size === 10 && decimals.length === 10);
+check('every artifact seed is the entropy with each byte\'s bits reversed', decimals.every(r => r[10] === 'yes' && r[9] === '0x' + bitrev(r[7])) && has('the stored entropy with the bits of each byte reversed'));
+const corr = decimals.map(r => +r[15]);
+check('platform image matches every stored artifact, corr 0.98 to 0.99', corr.every(c => [98, 99].includes(Math.round(100 * c))) && has('a gray-level correlation of 0.98 to 0.99 for all ten'), corr.map(c => c.toFixed(3)).join(' '));
+check('edition 1: three regenerations wrote raw bytes that do not run', raws.length === 3 && raws.every(r => r[12] === 'no' && r[13] === '0') && has('Three regeneration calls I sent'));
+const ed1 = decimals.find(r => r[0] === '5364'), FIG_SEED = BigInt(ed1[9]).toString();
+check('Figure 1 seed is edition 1\'s mint-time artifact seed at block 14305273', ed1[3] === '14305273' && readFileSync('Makefile', 'utf8').includes(`repro/figures.mjs ${FIG_SEED}`) && has('as the mint wrote it at block 14305273, seed \\texttt{0x975fa1a8\\ldots4e98}') && ed1[9].startsWith('0x975fa1a8') && ed1[9].endsWith('4e98'));
+check('Figure 1 traits are edition 1\'s trait line', ed1[14].includes('field · 3 inks · source: blue tree · memory 100% · ember') && has('Traits: field density, three inks, source ``blue tree\'\', one ember'));
 check('memory at editions 15/30/44 in Figure 1', [15, 30, 44].every((e, i) => Math.round(100 * Math.max(.12, 1 - .88 * (e - 1) / 43)) === [71, 41, 12][i]) && has('memory 71\\%') && has('memory 41\\%') && has('memory 12\\%'));
 
 // archive identifiers agree across the paper, README and Zenodo metadata
@@ -99,7 +110,7 @@ if (process.argv.includes('--rebuild')) {
     execFileSync('make', ['data'], { cwd: dir, stdio: 'ignore' });
     const a = readFileSync('data/SHA256SUMS', 'utf8'), b = readFileSync(join(dir, 'data/SHA256SUMS'), 'utf8');
     check('clean clone: make data reproduces data/SHA256SUMS', a === b);
-    execFileSync('node', ['repro/figures.mjs'], { cwd: dir, stdio: 'ignore' });
+    execFileSync('node', ['repro/figures.mjs', FIG_SEED], { cwd: dir, stdio: 'ignore' });
     const svgs = readdirSync('figures').filter(f => f.endsWith('.svg'));
     check('clean clone: Figure 1 SVGs regenerate byte-identical', svgs.length === 4 && svgs.every(f => readFileSync(join('figures', f)).equals(readFileSync(join(dir, 'figures', f)))), `${svgs.length} files`);
   } finally { rmSync(dir, { recursive: true, force: true }); }

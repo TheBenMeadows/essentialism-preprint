@@ -10,6 +10,7 @@ all: data figures paper
 
 verify:
 	$(NODE) repro/verify-chain.mjs
+	$(NODE) repro/provenance.mjs
 
 data:
 	$(NODE) repro/census.mjs 20000
@@ -23,7 +24,7 @@ data:
 	cd data && $(SHA256) census.csv curve.csv field.csv grids.csv plot.csv renders.csv sigma.txt stats.txt area.csv carbon.csv table2.tex > SHA256SUMS
 
 figures:
-	$(NODE) repro/figures.mjs 1391882777
+	$(NODE) repro/figures.mjs 68468206326414033182208490206218027875160410067690517625730587478246395170456
 	cd figures && for e in 01 15 30 44; do \
 	  inkscape strip-ed$$e.svg --export-type=png --export-width=750 --export-filename=strip-ed$$e.png && \
 	  sips -s format jpeg -s formatOptions 88 strip-ed$$e.png --out strip-ed$$e.jpg >/dev/null && rm strip-ed$$e.png; done

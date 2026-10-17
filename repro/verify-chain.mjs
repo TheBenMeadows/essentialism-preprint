@@ -20,6 +20,8 @@ console.log(`chain: generator v${value.version}, ${value.n_tokens} of ${value.sa
 console.log(`local: sha256 ${sha(local)}`);
 
 const updates = await get(`${KEY}/updates?limit=200`);
+writeFileSync(new URL('../data/bigmap-407.json', import.meta.url), JSON.stringify({ value }, null, 1) + '\n');
+writeFileSync(new URL('../data/bigmap-407-updates.json', import.meta.url), JSON.stringify(updates, null, 1) + '\n');
 writeFileSync(new URL('../data/generator-history.csv', import.meta.url), 'timestamp,action,version,code_bytes,code_sha256_12,description_bytes,first_header_line\n' +
   updates.map(u => {
     const code = decode(u.value.code);

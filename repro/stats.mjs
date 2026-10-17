@@ -25,7 +25,8 @@ for (const s of ['tree', 'sky']) {
   put(`fstar_${s}`, fs); put(`fstar_${s}_edition`, 1 + 43 * (1 - fs) / .88);
   put(`closed_ed34_${s}`, closed(memory(34), SP[s])); put(`field_ed34_${s}`, F(s, 34));
   put(`closed_ed44_${s}`, closed(.12, SP[s])); put(`field_ed44_${s}`, F(s, 44));
-  for (const e of [1, 9, 22, 34, 44]) put(`dots_med_ed${e}_${s}`, C(s, e, 'med'));
+  for (const e of [1, 9, 10, 22, 34, 44]) put(`dots_med_ed${e}_${s}`, C(s, e, 'med'));
+  put(`field_med_ed10_${s}`, F(s, 10));
   put(`dots_n_${s}`, C(s, 1, 'n'));
   const ex = eds.map(e => C(s, e, 'excluded'));
   put(`excluded_ed1_${s}`, C(s, 1, 'excluded')); put(`excluded_ed44_${s}`, C(s, 44, 'excluded')); put(`excluded_max_${s}`, Math.max(...ex));
