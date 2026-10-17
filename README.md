@@ -2,9 +2,9 @@
 
 Source, data and measurement code for "essentialism: An On-Chain Generative Work That Forgets Two Photographs" (Benjamin Meadows, October 2026).
 
-Archived on Zenodo: https://doi.org/10.5281/zenodo.23333266
+Archived on Zenodo: https://doi.org/10.5281/zenodo.23333265
 
-Cite as: Benjamin Meadows. essentialism: An On-Chain Generative Work That Forgets Two Photographs. Preprint, version 1.0.1, October 2026. https://doi.org/10.5281/zenodo.23333266
+Cite as: Benjamin Meadows. essentialism: An On-Chain Generative Work That Forgets Two Photographs. Preprint, version 1.0.1, October 2026. https://doi.org/10.5281/zenodo.23333265
 
 ## Build
 

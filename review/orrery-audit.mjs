@@ -85,7 +85,7 @@ check('Figure 1 traits are edition 1\'s trait line', ed1[14].includes('field · 
 check('memory at editions 15/30/44 in Figure 1', [15, 30, 44].every((e, i) => Math.round(100 * Math.max(.12, 1 - .88 * (e - 1) / 43)) === [71, 41, 12][i]) && has('memory 71\\%') && has('memory 41\\%') && has('memory 12\\%'));
 
 // archive identifiers agree across the paper, README and Zenodo metadata
-const DOI = '10.5281/zenodo.23333266', GH = 'https://github.com/TheBenMeadows/essentialism-preprint';
+const DOI = '10.5281/zenodo.23333265', GH = 'https://github.com/TheBenMeadows/essentialism-preprint';
 const readme = readFileSync('README.md', 'utf8'), zen = readFileSync('.zenodo.json', 'utf8');
 check('DOI and repo URL in abstract and Section 6', (tex.match(new RegExp(DOI.replace(/\./g, '\\.'), 'g')) || []).length === 2 && (tex.match(new RegExp(GH.replace(/[./]/g, m => '\\' + m), 'g')) || []).length === 2);
 check('README and .zenodo.json carry the same DOI', readme.includes(`https://doi.org/${DOI}`) && zen.includes(DOI));
