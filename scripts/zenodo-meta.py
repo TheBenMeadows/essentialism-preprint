@@ -14,6 +14,8 @@ for a, b in [(r"\\texttt\{(.*?)\}", r"\1"), (r"\$28\\times38\$", "28x38"), (r"\\
     abstract = re.sub(a, b, abstract)
 assert "\\" not in abstract and "$" not in abstract, "unconverted LaTeX left in abstract"
 (root / "abstract.txt").write_text(abstract + "\n")
+zenodo = root / ".zenodo.json"
+version = json.loads(zenodo.read_text()).get("version") if zenodo.exists() else None
 meta = {
     "upload_type": "publication",
     "publication_type": "preprint",
@@ -22,6 +24,7 @@ meta = {
     "description": abstract,
     "license": "cc-by-4.0",
     "language": "eng",
+    **({"version": version} if version else {}),
     "keywords": ["generative art", "on-chain art", "blockchain", "Tezos", "memory", "forgetting", "digital preservation"],
     "related_identifiers": [
         {"identifier": "https://bootloader.art/generator/svg-js/407", "relation": "documents", "resource_type": "other"},
@@ -29,5 +32,5 @@ meta = {
     ],
     "notes": "Paper text (main.tex, main.pdf, refs.bib, figures) is CC BY 4.0. Code and data, including the copy of the on-chain generator, are MIT. See LICENSE.",
 }
-(root / ".zenodo.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
+zenodo.write_text(json.dumps(meta, indent=2, ensure_ascii=False) + "\n")
 print(f"title: {title}\nabstract: {len(abstract)} chars\nwrote .zenodo.json and abstract.txt")

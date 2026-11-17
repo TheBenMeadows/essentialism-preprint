@@ -36,5 +36,13 @@ check:
 	cd data && $(SHA256) -c SHA256SUMS
 	$(NODE) review/audit.mjs
 	$(NODE) review/orrery-audit.mjs
+	$(MAKE) prose-guard pdf-check
 
 .PHONY: all verify data figures paper check
+
+# Pre-submission checks (arxiv-check, arxiv-verify, cite-health, prose-guard,
+# pdf-check, paper-checks); described in tools/paper-checks/paper-checks.mk.
+# Build output goes to build/, which ignores itself.
+PAPER_DIR := .
+PAPER_CHECKS := tools/paper-checks
+include $(PAPER_CHECKS)/paper-checks.mk

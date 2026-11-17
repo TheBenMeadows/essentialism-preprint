@@ -4,7 +4,7 @@ Source, data and measurement code for "essentialism: An On-Chain Generative Work
 
 Archived on Zenodo: https://doi.org/10.5281/zenodo.23333265
 
-Cite as: Benjamin Meadows. essentialism: An On-Chain Generative Work That Forgets Two Photographs. Preprint, version 1.0.1, October 2026. https://doi.org/10.5281/zenodo.23333265
+Cite as: Benjamin Meadows. essentialism: An On-Chain Generative Work That Forgets Two Photographs. Preprint, version 2.0.0, November 2026. https://doi.org/10.5281/zenodo.23333265
 
 ## Build
 
@@ -53,6 +53,7 @@ The file is chain bytes, not source. A formatter, a prose pass or a line-ending 
 
 ## Changes
 
+- 2.0.0 (November 2026). The paper is rewritten. It leads with what the work does, states its scope (one work, studied by its author, measuring what the program draws and not what a viewer recognizes), and adds a paragraph on what the ledger's record can and cannot explain. Fourteen editions are minted; editions 11 to 14 are in `data/provenance.csv`, and `data/tokens.json` holds the raw responses for all fourteen. Corrections to 1.0.1, all mine: Section 6 still said the platform's image could not be rebuilt, which the abstract and Section 5 had already withdrawn; the printed memory falls below the tree's median from edition 13, not 12; the displacement filter moves a dot up to 3 pixels on each axis, so up to about 4.2 on the diagonal; the measured curve equals the closed form at edition 1 and lies above it at every later edition; the photographs were cropped and resampled before autocontrast, not after; on night paper bone takes carbon's place, so "the ink order is reversed" was too simple; the Tezos white paper link was dead. The 0.98 to 0.99 match with the platform's image is now credited to `review/thumb-match.mjs`, which renders each mint-time artifact in headless Chromium. Related work adds 0xDEAFBEEF's Entropy, Terraforms, Agrippa, Campbell, Frampton and Muñoz, and the limits add Harmon and Julesz; twenty-one bibliography entries the text no longer uses are gone. `make check` now also runs the checks in `tools/paper-checks`.
 - 1.0.1 (October 2026). Version 1.0.0 said the platform's image of a minted token could not be reproduced from on-chain data. It can: the artifact the mint writes declares its seed, which is the stored entropy with the bits of each byte reversed, and that artifact reproduces the platform's image for all ten minted tokens (`data/provenance.csv`). The error was mine: I had tested a viewer value truncated to 32 bits. Edition 1's current artifact was overwritten by three regenerations I requested and does not run; the mint-time version at block 14305273 does. Figure 1 now draws edition 1's own seed. Ten editions are minted. New files: `repro/provenance.mjs`, `review/thumb-match.mjs`, `data/provenance.csv`, `data/thumb-match.csv`.
 - 1.0.0 (October 2026). First public version.
 
