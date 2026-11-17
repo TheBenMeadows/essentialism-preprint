@@ -26,14 +26,14 @@ const sha = createHash('sha256').update(code.replace(/\n+$/, ''), 'utf8').digest
 check('generator digest in text matches the copy', has(sha), sha.slice(0, 12));
 check('version 6 on chain', key.version === '6' && has('generator version 6'));
 check('44 editions at 8 tez', key.sale.editions === '44' && key.sale.price === '8000000' && has('The edition is 44 tokens at 8 tez'));
-check('ten minted', key.n_tokens === '10' && has('Ten of the 44 editions are minted') && has('Ten editions are minted'));
+check('fourteen minted', key.n_tokens === '14' && has('Fourteen of the 44 editions are minted') && has('fourteen are minted'));
 check('stored bytes 15,560', Buffer.from(key.code, 'hex').length === 15560 && has('15{,}560 bytes'));
 check('code bytes 10,098', Buffer.byteLength(code.replace(/\n+$/, '')) === 10098 && has('10{,}098 bytes'));
-check('17 writes', hist.length === 17 && has('written 17 times') && has('All 17 writes are listed'), `${hist.length}`);
+check('17 writes', hist.length === 21 && has('written 21 times') && has('All 21 writes are listed'), `${hist.length}`);
 const versions = hist.filter((u, i) => i === 0 || u.value.version !== hist[i - 1].value.version).length;
 const sales = hist.filter((u, i) => i > 0 && JSON.stringify(u.value.sale) !== JSON.stringify(hist[i - 1].value.sale)).length;
 const mints = hist.filter((u, i) => i > 0 && u.value.n_tokens !== hist[i - 1].value.n_tokens).length;
-check('write breakdown 1 create + 5 versions + 1 sale + 10 mints', versions === 6 && sales === 1 && mints === 10 && has('once to create it, five times to publish versions 2 to 6, once to open the sale, and ten times to record a mint'), `${versions} version states, ${sales} sale, ${mints} mints`);
+check('write breakdown 1 create + 5 versions + 1 sale + 14 mints', versions === 6 && sales === 1 && mints === 14 && has('once to create it, five times to publish versions 2 to 6, once to open the sale, and fourteen times to record a mint'), `${versions} version states, ${sales} sale, ${mints} mints`);
 const v1 = hist[0], firstMint = hist.find(u => u.value.n_tokens === '1'), v4 = hist.find(u => u.value.version === '4');
 check('version 1 at 22:10:28 UTC 31 July', v1.timestamp === '2026-07-31T22:10:28Z' && has('published at 22:10:28 UTC on 31 July'));
 const mins = (new Date(firstMint.timestamp) - new Date(v1.timestamp)) / 60000;
@@ -46,7 +46,7 @@ check('published 31 July 2026', key.created === '2026-07-31T22:10:28Z' && has('p
 // grids and costs
 const tree = code.match(/const TREE = '([0-9a-f]+)'/)[1], sky = code.match(/const SKY = '([0-9a-f]+)'/)[1];
 check('grids are 1,064 cells each', tree.length === 1064 && sky.length === 1064 && has('1{,}064 bytes per photograph'));
-check('storage cost of grids 0.532 tez', 2128 * 250 / 1e6 === 0.532 && has('$2{,}128 \\times 250$ mutez $= 0.532$ tez'));
+check('storage cost of grids 0.532 tez', 2128 * 250 / 1e6 === 0.532 && has('2{,}128 bytes at the 250 mutez (0.00025 tez)'));
 check('information at most 532 bytes', 1064 * 4 / 8 === 532 && has('at most 532 bytes of information'));
 
 // cited lines say what the paper says they say
@@ -74,13 +74,13 @@ check('platform PRNG construction quoted', has('splitmix64 into sfc32'));
 const prov = readFileSync('data/provenance.csv', 'utf8').trim().split('\n').slice(1).map(l => l.split(','));
 const bitrev = hex => [...Buffer.from(hex, 'hex')].map(b => parseInt(b.toString(2).padStart(8, '0').split('').reverse().join(''), 2).toString(16).padStart(2, '0')).join('');
 const decimals = prov.filter(r => r[8] === 'decimal'), raws = prov.filter(r => r[0] === '5364' && r[8] === 'raw');
-check('ten tokens, one program-bearing artifact each, in data/provenance.csv', new Set(prov.map(r => r[0])).size === 10 && decimals.length === 10);
+check('fourteen tokens, one program-bearing artifact each, in data/provenance.csv', new Set(prov.map(r => r[0])).size === 14 && decimals.length === 14);
 check('every artifact seed is the entropy with each byte\'s bits reversed', decimals.every(r => r[10] === 'yes' && r[9] === '0x' + bitrev(r[7])) && has('the stored entropy with the bits of each byte reversed'));
 const corr = decimals.map(r => +r[15]);
-check('platform image matches every stored artifact, corr 0.98 to 0.99', corr.every(c => [98, 99].includes(Math.round(100 * c))) && has('a gray-level correlation of 0.98 to 0.99 for all ten'), corr.map(c => c.toFixed(3)).join(' '));
-check('edition 1: three regenerations wrote raw bytes that do not run', raws.length === 3 && raws.every(r => r[12] === 'no' && r[13] === '0') && has('Three regeneration calls I sent'));
+check('platform image matches every stored artifact, corr 0.98 to 0.99', corr.every(c => [98, 99].includes(Math.round(100 * c))) && has('a gray-level correlation of 0.98 to 0.99 for all fourteen'), corr.map(c => c.toFixed(3)).join(' '));
+check('edition 1: three regenerations wrote raw bytes that do not run', raws.length === 3 && raws.every(r => r[12] === 'no' && r[13] === '0') && has("three times to regenerate edition 1's artifact"));
 const ed1 = decimals.find(r => r[0] === '5364'), FIG_SEED = BigInt(ed1[9]).toString();
-check('Figure 1 seed is edition 1\'s mint-time artifact seed at block 14305273', ed1[3] === '14305273' && readFileSync('Makefile', 'utf8').includes(`repro/figures.mjs ${FIG_SEED}`) && has('as the mint wrote it at block 14305273, seed \\texttt{0x975fa1a8\\ldots4e98}') && ed1[9].startsWith('0x975fa1a8') && ed1[9].endsWith('4e98'));
+check('Figure 1 seed is edition 1\'s mint-time artifact seed at block 14305273', ed1[3] === '14305273' && readFileSync('Makefile', 'utf8').includes(`repro/figures.mjs ${FIG_SEED}`) && has('seed \\texttt{0x975fa1a8\\ldots4e98} from its artifact as the mint wrote it at block 14305273') && ed1[9].startsWith('0x975fa1a8') && ed1[9].endsWith('4e98'));
 check('Figure 1 traits are edition 1\'s trait line', ed1[14].includes('field · 3 inks · source: blue tree · memory 100% · ember') && has('Traits: field density, three inks, source ``blue tree\'\', one ember'));
 check('memory at editions 15/30/44 in Figure 1', [15, 30, 44].every((e, i) => Math.round(100 * Math.max(.12, 1 - .88 * (e - 1) / 43)) === [71, 41, 12][i]) && has('memory 71\\%') && has('memory 41\\%') && has('memory 12\\%'));
 
